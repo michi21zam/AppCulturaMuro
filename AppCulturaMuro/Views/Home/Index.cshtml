@@ -1,0 +1,84 @@
+﻿@model List<AppCulturaMuro.Models.Post>
+@{
+    ViewBag.Title = "Feed";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-xl">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem;">
+        <h1 style="font-family:var(--font-head);font-weight:800;font-size:1.4rem;letter-spacing:-.03em;">
+            @(string.IsNullOrEmpty(ViewBag.Query as string)
+                ? "Latest posts"
+                : "Results for \"" + ViewBag.Query + "\"")
+        </h1>
+        <span style="font-size:12px;color:var(--muted);">@Model.Count posts</span>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="cm-empty">
+            <i class="bi bi-journal-x" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>
+            Nothing here yet. Be the first to post!
+        </div>
+    }
+    else
+    {
+        <div class="cm-feed">
+            @foreach (var post in Model)
+            {
+                <article class="cm-card">
+                    <!-- Author header -->
+                    <div class="cm-card-header">
+                        <div class="cm-avatar-sm">
+                            @post.User.Username.Substring(0, 1).ToUpper()
+                        </div>
+                        <div>
+                            <div class="cm-username">@@@post.User.Username</div>
+                            <div class="cm-time">@post.CreatedAt.ToString("MMM d, yyyy")</div>
+                        </div>
+                    </div>
+
+                    <!-- Image optional -->
+                    @if (!string.IsNullOrEmpty(post.ImageUrl))
+                    {
+                        <img src="@post.ImageUrl" class="cm-card-img" alt="post image" />
+                    }
+
+                    <!-- Body -->
+                    <div class="cm-card-body">
+                        @if (!string.IsNullOrEmpty(post.Title))
+                        {
+                            <div class="cm-card-title">@post.Title</div>
+                        }
+                        @if (!string.IsNullOrEmpty(post.Content))
+                        {
+                            <p class="cm-card-text">@post.Content</p>
+                        }
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="cm-card-footer">
+                        <a href="/Post/Detail/@post.Id" class="cm-comment-link">
+                            <i class="bi bi-chat"></i>
+                            @post.Comments.Count comment@(post.Comments.Count != 1 ? "s" : "")
+                        </a>
+
+                        @* Delete only for owner *@
+                        @if ((int?)Session["UserId"] == post.UserId)
+                        {
+                            using (Html.BeginForm("Delete", "Post", new { id = post.Id }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit"
+                                        onclick="return confirm('Delete this post?')"
+                                        style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            }
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</div>

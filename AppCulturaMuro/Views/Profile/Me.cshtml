@@ -1,0 +1,65 @@
+﻿@model AppCulturaMuro.Models.User
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="cm-profile-wrap">
+
+    <!-- Header -->
+    <div class="cm-profile-head">
+        <div class="cm-avatar-lg">
+            @Model.Username.Substring(0, 1).ToUpper()
+        </div>
+        <div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:1.2rem;">
+                @Model.FullName
+            </div>
+            <div style="color:var(--muted);font-size:13px;">@@@Model.Username</div>
+            <div style="color:var(--muted);font-size:12px;margin-top:.2rem;">@Model.Email</div>
+        </div>
+    </div>
+
+    <!-- Logout -->
+    <div style="margin-bottom:2rem;">
+        @using (Html.BeginForm("Logout", "Auth", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <button type="submit"
+                    style="background:none;border:1.5px solid var(--border);
+                           border-radius:50px;padding:8px 20px;font-size:13px;
+                           cursor:pointer;color:var(--text);font-family:var(--font-body);
+                           transition:border-color .2s;">
+                <i class="bi bi-box-arrow-right"></i> Log out
+            </button>
+        }
+    </div>
+
+    <!-- My posts -->
+    <div class="cm-section-label">My posts</div>
+
+    @if (!Model.Posts.Any())
+    {
+        <div class="cm-empty" style="padding:2rem 0;">
+            You haven't posted anything yet.
+        </div>
+    }
+    else
+    {
+        foreach (var p in Model.Posts)
+        {
+            <div class="cm-post-row">
+                <div>
+                    <div style="font-weight:500;">@(p.Title ?? "(No title)")</div>
+                    <div style="font-size:11px;color:var(--muted);">
+                        @p.CreatedAt.ToString("MMM d, yyyy") ·
+                        @(p.Published ? "Published" : "Draft")
+                    </div>
+                </div>
+                <a href="/Post/Detail/@p.Id" class="cm-link" style="font-size:13px;">
+                    View <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        }
+    }
+</div>

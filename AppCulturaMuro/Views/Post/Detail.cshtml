@@ -1,0 +1,96 @@
+﻿@model AppCulturaMuro.ViewModels.PostDetailViewModel
+@{
+    ViewBag.Title = Model.Post.Title ?? "Post";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="cm-detail-wrap">
+
+    <!-- Back -->
+    <a href="/Home/Index" class="cm-link"
+       style="font-size:13px;display:inline-flex;align-items:center;gap:4px;margin-bottom:1.25rem;">
+        <i class="bi bi-arrow-left"></i> Back to feed
+    </a>
+
+    <!-- Post -->
+    <div class="cm-card" style="margin-bottom:2rem;">
+        <div class="cm-card-header">
+            <div class="cm-avatar-sm">
+                @Model.Post.User.Username.Substring(0, 1).ToUpper()
+            </div>
+            <div>
+                <div class="cm-username">@@@Model.Post.User.Username</div>
+                <div class="cm-time">@Model.Post.CreatedAt.ToString("MMMM d, yyyy 'at' HH:mm")</div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Post.ImageUrl))
+        {
+            <img src="@Model.Post.ImageUrl" class="cm-card-img" alt="post image" />
+        }
+
+        <div class="cm-card-body">
+            @if (!string.IsNullOrEmpty(Model.Post.Title))
+            {
+                <div class="cm-card-title" style="font-size:1.25rem;">@Model.Post.Title</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Post.Content))
+            {
+                <p style="font-size:15px;white-space:pre-wrap;color:#333;margin-top:.5rem;">
+                    @Model.Post.Content
+                </p>
+            }
+        </div>
+    </div>
+
+    <!-- Comments header -->
+    <h2 class="cm-section-label">
+        <i class="bi bi-chat"></i>
+        @Model.Comments.Count comment@(Model.Comments.Count != 1 ? "s" : "")
+    </h2>
+
+    <!-- Add comment -->
+    <div class="cm-card" style="padding:1.25rem;margin-bottom:1.5rem;">
+        @using (Html.BeginForm("AddComment", "Post", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="postId" value="@Model.Post.Id" />
+            <div style="display:flex;gap:.75rem;align-items:flex-end;">
+                <textarea name="content" class="cm-form-control" rows="2"
+                          placeholder="Write a comment…"
+                          style="flex:1;resize:none;"></textarea>
+                <button type="submit" class="cm-btn-create"
+                        style="padding:10px 18px;white-space:nowrap;">
+                    Send <i class="bi bi-send"></i>
+                </button>
+            </div>
+        }
+    </div>
+
+    <!-- Comment list -->
+    @if (!Model.Comments.Any())
+    {
+        <div class="cm-empty" style="padding:2rem 0;">
+            No comments yet. Start the conversation!
+        </div>
+    }
+    else
+    {
+        foreach (var c in Model.Comments)
+        {
+            <div class="cm-comment-item">
+                <div class="cm-avatar-sm"
+                     style="width:30px;height:30px;font-size:11px;flex-shrink:0;">
+                    @c.User.Username.Substring(0, 1).ToUpper()
+                </div>
+                <div class="cm-comment-body">
+                    <div class="cm-comment-meta">
+                        <strong>@@@c.User.Username</strong>
+                        · @c.CreatedAt.ToString("MMM d, HH:mm")
+                    </div>
+                    <div>@c.Content</div>
+                </div>
+            </div>
+        }
+    }
+</div>

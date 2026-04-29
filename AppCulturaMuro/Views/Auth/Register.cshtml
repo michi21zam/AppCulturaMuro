@@ -1,0 +1,55 @@
+﻿@model AppCulturaMuro.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="cm-auth-wrap">
+    <div class="cm-auth-card">
+        <div class="cm-auth-logo">MURO</div>
+        <div class="cm-auth-sub">Join the community.</div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="cm-alert-error">
+                @Html.ValidationSummary(false)
+            </div>
+        }
+
+        @using (Html.BeginForm("Register", "Auth", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="cm-form-group">
+                <label class="cm-form-label">Full Name</label>
+                @Html.TextBoxFor(m => m.FullName, new { @class = "cm-form-control", placeholder = "María García" })
+            </div>
+
+            <div class="cm-form-group">
+                <label class="cm-form-label">Username</label>
+                @Html.TextBoxFor(m => m.Username, new { @class = "cm-form-control", placeholder = "maria.g" })
+            </div>
+
+            <div class="cm-form-group">
+                <label class="cm-form-label">Email</label>
+                @Html.TextBoxFor(m => m.Email, new { @class = "cm-form-control", placeholder = "you@example.com", type = "email" })
+            </div>
+
+            <div class="cm-form-group">
+                <label class="cm-form-label">Password</label>
+                @Html.PasswordFor(m => m.Password, new { @class = "cm-form-control", placeholder = "Min. 6 characters" })
+            </div>
+
+            <div class="cm-form-group">
+                <label class="cm-form-label">Confirm Password</label>
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "cm-form-control", placeholder = "Repeat password" })
+            </div>
+
+            <button type="submit" class="cm-btn-primary">Create account →</button>
+        }
+
+        <p style="text-align:center;margin-top:1.25rem;font-size:13px;color:#888">
+            Already have an account? <a class="cm-link" href="/Auth/Login">Log in</a>
+        </p>
+    </div>
+</div>

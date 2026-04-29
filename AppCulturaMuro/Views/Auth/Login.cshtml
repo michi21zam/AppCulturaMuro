@@ -1,0 +1,40 @@
+﻿@model AppCulturaMuro.ViewModels.LoginViewModel
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="cm-auth-wrap">
+    <div class="cm-auth-card">
+        <div class="cm-auth-logo">MURO</div>
+        <div class="cm-auth-sub">Your cultural wall. Log in to continue.</div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="cm-alert-error">
+                @Html.ValidationSummary(false)
+            </div>
+        }
+
+        @using (Html.BeginForm("Login", "Auth", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="cm-form-group">
+                <label class="cm-form-label">Email</label>
+                @Html.TextBoxFor(m => m.Email, new { @class = "cm-form-control", placeholder = "you@example.com", type = "email" })
+            </div>
+
+            <div class="cm-form-group">
+                <label class="cm-form-label">Password</label>
+                @Html.PasswordFor(m => m.Password, new { @class = "cm-form-control", placeholder = "••••••••" })
+            </div>
+
+            <button type="submit" class="cm-btn-primary">Log in →</button>
+        }
+
+        <p style="text-align:center;margin-top:1.25rem;font-size:13px;color:#888">
+            No account? <a class="cm-link" href="/Auth/Register">Create one</a>
+        </p>
+    </div>
+</div>
