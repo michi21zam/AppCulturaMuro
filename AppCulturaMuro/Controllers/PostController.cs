@@ -36,12 +36,12 @@ namespace AppCulturaMuro.Controllers
             // Handle image upload
             if (vm.Image != null && vm.Image.ContentLength > 0)
             {
-                var uploadsDir = Server.MapPath("~/Content/uploads");
+                var uploadsDir = Server.MapPath("~/App_Data/uploads");
                 Directory.CreateDirectory(uploadsDir);
                 var ext = Path.GetExtension(vm.Image.FileName);
                 var fileName = Guid.NewGuid().ToString() + ext;
                 vm.Image.SaveAs(Path.Combine(uploadsDir, fileName));
-                imageUrl = "/Content/uploads/" + fileName;
+                imageUrl = "/Home/Image?file=" + fileName; // ← línea corregida
             }
 
             var post = new Post

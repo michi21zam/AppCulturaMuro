@@ -1,4 +1,5 @@
 ﻿using AppCulturaMuro.Models;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -11,7 +12,6 @@ namespace AppCulturaMuro.Controllers
         // GET /Home/Index
         public ActionResult Index(string q)
         {
-            // Guard: must be logged in
             if (Session["UserId"] == null)
                 return RedirectToAction("Login", "Auth");
 
@@ -20,7 +20,6 @@ namespace AppCulturaMuro.Controllers
                 .Include("Comments")
                 .Where(p => p.Published);
 
-            // Search filter
             if (!string.IsNullOrWhiteSpace(q))
             {
                 query = query.Where(p =>
@@ -36,6 +35,24 @@ namespace AppCulturaMuro.Controllers
 
             ViewBag.Query = q;
             return View(posts);
+        }
+
+        // GET /Home/Image?file=guid.jpg
+        public ActionResult Image(string file)
+        {
+            if (string.IsNullOrWhiteSpace(file) || file.Contains(".."))
+                return HttpNotFound();
+
+            var path = Server.MapPath("~/App_Data/uploads/" + file);
+            if (!File.Exists(path))
+                return HttpNotFound();
+
+            var ext = Path.GetExtension(file).ToLower();
+            var mime = ext == ".png" ? "image/png"
+                     : ext == ".gif" ? "image/gif"
+                     : "image/jpeg";
+
+            return File(path, mime);
         }
 
         protected override void Dispose(bool disposing)
