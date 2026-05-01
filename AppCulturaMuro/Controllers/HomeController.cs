@@ -44,7 +44,7 @@ namespace AppCulturaMuro.Controllers
                 return HttpNotFound();
 
             var path = Server.MapPath("~/App_Data/uploads/" + file);
-            if (!File.Exists(path))
+            if (!System.IO.File.Exists(path))
                 return HttpNotFound();
 
             var ext = Path.GetExtension(file).ToLower();
