@@ -143,7 +143,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\uploads\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202604292123026_InitialCreate.resx">
