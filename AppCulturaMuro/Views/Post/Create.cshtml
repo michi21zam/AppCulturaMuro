@@ -54,17 +54,44 @@
 
 @section Scripts {
     <script>
-    // Image preview before upload
-    document.getElementById('imageInput').addEventListener('change', function (e) {
-        var file = e.target.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function (ev) {
-            var img = document.getElementById('imagePreview');
-            img.src = ev.target.result;
-            img.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    });
+        document.addEventListener('DOMContentLoaded', function () {
+            var input = document.getElementById('imageInput');
+            if (!input) return;
+
+            input.addEventListener('change', function (e) {
+                var file = e.target.files[0];
+                if (!file) return;
+
+                // Validar que sea imagen
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor selecciona un archivo de imagen válido.');
+                    input.value = '';
+                    return;
+                }
+
+                // Validar tamaño (máx 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('La imagen no puede superar los 5MB.');
+                    input.value = '';
+                    return;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (ev) {
+                    var img = document.getElementById('imagePreview');
+                    if (!img) return;
+                    img.src = ev.target.result;
+                    img.style.display = 'block';
+                };
+
+                reader.onerror = function () {
+                    alert('Error al leer el archivo.');
+                    input.value = '';
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
     </script>
 }
