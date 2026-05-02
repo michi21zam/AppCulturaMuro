@@ -14,10 +14,10 @@
     --border: #e5e2db;
     --radius: 16px;
     --radius-sm: 10px;
-    /*    --font-head: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;*/
-    --font-head: 'Times New Roman', Times, serif;
-    --font-body: 'Times New Roman', Times, serif;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+/*    --font-head: 'Times New Roman', Times, serif;
+    --font-body: 'Times New Roman', Times, serif;*/
     --shadow: 0 2px 16px rgba(0,0,0,0.06);
     --shadow-hover: 0 6px 32px rgba(0,0,0,0.11);
     --feed-width: 640px;
