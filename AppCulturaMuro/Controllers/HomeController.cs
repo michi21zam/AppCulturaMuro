@@ -1,4 +1,5 @@
 ﻿using AppCulturaMuro.Models;
+using AppCulturaMuro.ViewModels;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -15,26 +16,57 @@ namespace AppCulturaMuro.Controllers
             if (Session["UserId"] == null)
                 return RedirectToAction("Login", "Auth");
 
-            var query = _db.Posts
+            // Si hay búsqueda, redirige a Search
+            if (!string.IsNullOrWhiteSpace(q))
+                return RedirectToAction("Search", new { q });
+
+            var posts = _db.Posts
                 .Include("User")
                 .Include("Comments")
-                .Where(p => p.Published);
-
-            if (!string.IsNullOrWhiteSpace(q))
-            {
-                query = query.Where(p =>
-                    p.Title.Contains(q) ||
-                    p.Content.Contains(q) ||
-                    p.User.Username.Contains(q));
-            }
-
-            var posts = query
+                .Where(p => p.Published)
                 .OrderByDescending(p => p.CreatedAt)
                 .Take(25)
                 .ToList();
 
-            ViewBag.Query = q;
             return View(posts);
+        }
+
+        // GET /Home/Search
+        public ActionResult Search(string q)
+        {
+            if (Session["UserId"] == null)
+                return RedirectToAction("Login", "Auth");
+
+            if (string.IsNullOrWhiteSpace(q))
+                return RedirectToAction("Index");
+
+            var posts = _db.Posts
+                .Include("User")
+                .Include("Comments")
+                .Where(p => p.Published && (
+                    p.Title.Contains(q) ||
+                    p.Content.Contains(q) ||
+                    p.User.Username.Contains(q) ||
+                    p.User.FullName.Contains(q)))
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(20)
+                .ToList();
+
+            var users = _db.Users
+                .Where(u =>
+                    u.Username.Contains(q) ||
+                    u.FullName.Contains(q))
+                .Take(10)
+                .ToList();
+
+            var vm = new SearchResultViewModel
+            {
+                Query = q,
+                Posts = posts,
+                Users = users
+            };
+
+            return View(vm);
         }
 
         // GET /Home/Image?file=guid.jpg

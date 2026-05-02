@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\site.css" />
+    <Content Include="Content\UniverZAM.png" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\site.js" />
     <Content Include="Web.config" />
@@ -123,6 +124,7 @@
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\PostDetailViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
+    <Compile Include="ViewModels\SearchResultViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -134,6 +136,8 @@
     <Content Include="Views\Post\Create.cshtml" />
     <Content Include="Views\Post\Detail.cshtml" />
     <Content Include="Views\Profile\Me.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Home\Search.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

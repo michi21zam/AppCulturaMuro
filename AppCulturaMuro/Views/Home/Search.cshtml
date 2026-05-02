@@ -1,0 +1,102 @@
+﻿@model AppCulturaMuro.ViewModels.SearchResultViewModel
+@{
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="cm-feed-wrap">
+
+    <div class="cm-feed-header">
+        <h1 class="cm-feed-title">
+            Results for <span style="color:var(--accent);">"@Model.Query"</span>
+        </h1>
+        <span class="cm-feed-count">
+            @(Model.Users.Count + Model.Posts.Count) results
+        </span>
+    </div>
+
+    <!-- ALL tab hint -->
+    <div class="cm-search-tabs">
+        <span class="cm-search-tab active">All</span>
+    </div>
+
+    <!-- USERS section -->
+    <div class="cm-search-section-label">
+        <i class="bi bi-people"></i> Users (@Model.Users.Count)
+    </div>
+
+    @if (!Model.Users.Any())
+    {
+        <div class="cm-empty" style="padding:1rem 0 1.5rem;">No users found.</div>
+    }
+    else
+    {
+        <div class="cm-user-results">
+            @foreach (var u in Model.Users)
+            {
+                <div class="cm-user-row">
+                    <div class="cm-avatar-sm">@u.Username.Substring(0, 1).ToUpper()</div>
+                    <div>
+                        <div style="font-weight:600;font-size:14px;">@u.FullName</div>
+                        <div style="font-size:12px;color:var(--muted);">@@@u.Username</div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- POSTS section -->
+    <div class="cm-search-section-label" style="margin-top:2rem;">
+        <i class="bi bi-file-text"></i> Posts (@Model.Posts.Count)
+    </div>
+
+    @if (!Model.Posts.Any())
+    {
+        <div class="cm-empty" style="padding:1rem 0;">No posts found.</div>
+    }
+    else
+    {
+        foreach (var post in Model.Posts)
+        {
+            <article class="cm-post-card">
+                <div class="cm-post-accent"></div>
+                <div class="cm-post-inner">
+                    <div class="cm-card-header">
+                        <div class="cm-avatar-sm">
+                            @post.User.Username.Substring(0, 1).ToUpper()
+                        </div>
+                        <div>
+                            <div class="cm-username">@@@post.User.Username</div>
+                            <div class="cm-time">
+                                <span class="cm-relative-time" data-date="@post.CreatedAt.ToString("o")"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(post.ImageUrl))
+                    {
+                        <img src="@post.ImageUrl" class="cm-card-img" alt="post image" />
+                    }
+
+                    <div class="cm-card-body">
+                        @if (!string.IsNullOrEmpty(post.Title))
+                        {
+                            <div class="cm-card-title">@post.Title</div>
+                        }
+                        @if (!string.IsNullOrEmpty(post.Content))
+                        {
+                            <p class="cm-card-text">@post.Content</p>
+                        }
+                    </div>
+
+                    <div class="cm-card-footer">
+                        <a href="/Post/Detail/@post.Id" class="cm-comment-link">
+                            <i class="bi bi-chat"></i>
+                            @post.Comments.Count comment@(post.Comments.Count != 1 ? "s" : "")
+                        </a>
+                    </div>
+                </div>
+            </article>
+        }
+    }
+</div>

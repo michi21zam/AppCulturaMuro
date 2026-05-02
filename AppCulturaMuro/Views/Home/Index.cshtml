@@ -4,14 +4,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-xl">
-    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem;">
-        <h1 style="font-family:var(--font-head);font-weight:800;font-size:1.4rem;letter-spacing:-.03em;">
-            @(string.IsNullOrEmpty(ViewBag.Query as string)
-                ? "Latest posts"
-                : "Results for \"" + ViewBag.Query + "\"")
-        </h1>
-        <span style="font-size:12px;color:var(--muted);">@Model.Count posts</span>
+<div class="cm-feed-wrap">
+    <div class="cm-feed-header">
+        <h1 class="cm-feed-title">Latest posts</h1>
+        <span class="cm-feed-count">@Model.Count posts</span>
     </div>
 
     @if (!Model.Any())
@@ -23,22 +19,27 @@
     }
     else
     {
-        <div class="cm-feed">
-            @foreach (var post in Model)
-            {
-                <article class="cm-card">
-                    <!-- Author header -->
+        foreach (var post in Model)
+        {
+            <article class="cm-post-card">
+                <!-- Accent bar -->
+                <div class="cm-post-accent"></div>
+
+                <div class="cm-post-inner">
+                    <!-- Author -->
                     <div class="cm-card-header">
                         <div class="cm-avatar-sm">
                             @post.User.Username.Substring(0, 1).ToUpper()
                         </div>
                         <div>
                             <div class="cm-username">@@@post.User.Username</div>
-                            <div class="cm-time">@post.CreatedAt.ToString("MMM d, yyyy")</div>
+                            <div class="cm-time">
+                                <span class="cm-relative-time" data-date="@post.CreatedAt.ToString("o")"></span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Image optional -->
+                    <!-- Image -->
                     @if (!string.IsNullOrEmpty(post.ImageUrl))
                     {
                         <img src="@post.ImageUrl" class="cm-card-img" alt="post image" />
@@ -58,12 +59,17 @@
 
                     <!-- Footer -->
                     <div class="cm-card-footer">
-                        <a href="/Post/Detail/@post.Id" class="cm-comment-link">
-                            <i class="bi bi-chat"></i>
-                            @post.Comments.Count comment@(post.Comments.Count != 1 ? "s" : "")
-                        </a>
+                        <div style="display:flex;align-items:center;gap:1rem;">
+                            <a href="/Post/Detail/@post.Id" class="cm-comment-link">
+                                <i class="bi bi-chat"></i>
+                                @post.Comments.Count comment@(post.Comments.Count != 1 ? "s" : "")
+                            </a>
+                            <span class="cm-read-time">
+                                <i class="bi bi-book"></i>
+                                @(Math.Max(1, (post.Content ?? "").Split(' ').Length / 200)) min read
+                            </span>
+                        </div>
 
-                        @* Delete only for owner *@
                         @if ((int?)Session["UserId"] == post.UserId)
                         {
                             using (Html.BeginForm("Delete", "Post", new { id = post.Id }, FormMethod.Post))
@@ -71,14 +77,14 @@
                                 @Html.AntiForgeryToken()
                                 <button type="submit"
                                         onclick="return confirm('Delete this post?')"
-                                        style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;">
+                                        class="cm-delete-btn">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             }
                         }
                     </div>
-                </article>
-            }
-        </div>
+                </div>
+            </article>
+        }
     }
 </div>
