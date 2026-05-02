@@ -11,9 +11,22 @@ function relativeTime(dateStr) {
 
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
+
 function clearSearch() {
     document.getElementById('searchInput').value = '';
     window.location.href = '/Home/Index';
+}
+
+// Modal de confirmación
+function showDeleteModal(formId) {
+    document.getElementById('cm-modal-confirm-btn').onclick = function () {
+        document.getElementById(formId).submit();
+    };
+    document.getElementById('cm-delete-modal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+    document.getElementById('cm-delete-modal').style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -23,6 +36,14 @@ document.addEventListener('DOMContentLoaded', function () {
         var date = el.getAttribute('data-date');
         if (date) el.textContent = relativeTime(date);
     });
+
+    // Cerrar modal al hacer click fuera
+    var modal = document.getElementById('cm-delete-modal');
+    if (modal) {
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closeDeleteModal();
+        });
+    }
 
     // Card entrance animation
     var cards = document.querySelectorAll('.cm-post-card');

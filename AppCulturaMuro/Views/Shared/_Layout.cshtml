@@ -5,22 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title — UniverZAM</title>
 
-    <!-- Google Fonts: Syne + DM Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="~/Content/site.css" />
 </head>
 <body>
 
-    @* Navbar only when logged in *@
     @if (Session["UserId"] != null)
     {
         <nav class="cm-navbar">
@@ -30,7 +23,6 @@
                     UniverZAM
                 </a>
 
-                <!-- Search form -->
                 <form method="get" action="/Home/Search" class="cm-search-form flex-grow-1">
                     <div class="cm-search-wrap">
                         <i class="bi bi-search"></i>
@@ -46,8 +38,26 @@
                     </div>
                 </form>
 
-                <!-- Actions -->
                 <div class="d-flex align-items-center gap-2">
+                    @{
+                        var unreadCount = 0;
+                        if (Session["UserId"] != null)
+                        {
+                            using (var db = new AppCulturaMuro.Models.AppDbContext())
+                            {
+                                var userId = (int)Session["UserId"];
+                                unreadCount = db.Notifications.Count(n => n.UserId == userId && !n.IsRead);
+                            }
+                        }
+                    }
+                    <a href="/Notification/Index" class="cm-notif-bell">
+                        <i class="bi bi-bell"></i>
+                        @if (unreadCount > 0)
+                        {
+                            <span class="cm-notif-badge">@unreadCount</span>
+                        }
+                    </a>
+
                     <a href="/Post/Create" class="cm-btn-create">
                         <i class="bi bi-plus-lg"></i> Post
                     </a>
@@ -67,12 +77,36 @@
         @RenderBody()
     </main>
 
-    <!-- Bootstrap JS -->
+    <!-- Delete Modal -->
+    <div id="cm-delete-modal" style="display:none;position:fixed;inset:0;z-index:999;
+         background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:16px;padding:2rem;max-width:360px;
+                    width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.2);text-align:center;">
+            <i class="bi bi-trash3" style="font-size:2rem;color:#ff4d4d;display:block;margin-bottom:1rem;"></i>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:.5rem;">
+                Are you sure?
+            </div>
+            <div style="color:#888;font-size:14px;margin-bottom:1.5rem;">
+                This action cannot be undone.
+            </div>
+            <div style="display:flex;gap:.75rem;justify-content:center;">
+                <button onclick="closeDeleteModal()"
+                        style="padding:10px 24px;border-radius:50px;border:1.5px solid #e5e2db;
+                               background:#fff;cursor:pointer;font-family:var(--font-head);font-weight:600;">
+                    No, cancel
+                </button>
+                <button id="cm-modal-confirm-btn"
+                        style="padding:10px 24px;border-radius:50px;border:none;
+                               background:#ff4d4d;color:#fff;cursor:pointer;
+                               font-family:var(--font-head);font-weight:600;">
+                    Yes, delete
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Custom JS -->
     <script src="~/Scripts/site.js"></script>
-
     @RenderSection("Scripts", required: false)
 </body>
 </html>

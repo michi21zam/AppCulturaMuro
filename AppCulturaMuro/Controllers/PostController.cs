@@ -10,7 +10,6 @@ namespace AppCulturaMuro.Controllers
     public class PostController : Controller
     {
         private readonly AppDbContext _db = new AppDbContext();
-
         private int? CurrentUserId => Session["UserId"] as int?;
 
         // GET /Post/Create
@@ -33,7 +32,6 @@ namespace AppCulturaMuro.Controllers
 
             string imageUrl = null;
 
-            // Handle image upload
             if (vm.Image != null && vm.Image.ContentLength > 0)
             {
                 var uploadsDir = Server.MapPath("~/App_Data/uploads");
@@ -41,7 +39,7 @@ namespace AppCulturaMuro.Controllers
                 var ext = Path.GetExtension(vm.Image.FileName);
                 var fileName = Guid.NewGuid().ToString() + ext;
                 vm.Image.SaveAs(Path.Combine(uploadsDir, fileName));
-                imageUrl = "/Home/Image?file=" + fileName; // ← línea corregida
+                imageUrl = "/Home/Image?file=" + fileName;
             }
 
             var post = new Post
@@ -100,6 +98,21 @@ namespace AppCulturaMuro.Controllers
                 };
                 _db.Comments.Add(comment);
                 _db.SaveChanges();
+
+                // Notificar al dueño del post
+                var post = _db.Posts.Find(postId);
+                if (post != null && post.UserId != CurrentUserId.Value)
+                {
+                    var commenterUsername = Session["Username"]?.ToString();
+                    var notification = new Notification
+                    {
+                        UserId = post.UserId,
+                        PostId = postId,
+                        Message = "@" + commenterUsername + " commented on your post \"" + (post.Title ?? "Untitled") + "\""
+                    };
+                    _db.Notifications.Add(notification);
+                    _db.SaveChanges();
+                }
             }
 
             return RedirectToAction("Detail", new { id = postId });

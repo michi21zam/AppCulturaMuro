@@ -21,12 +21,10 @@
     {
         foreach (var post in Model)
         {
+            var formId = "delete-form-" + post.Id;
             <article class="cm-post-card">
-                <!-- Accent bar -->
                 <div class="cm-post-accent"></div>
-
                 <div class="cm-post-inner">
-                    <!-- Author -->
                     <div class="cm-card-header">
                         <div class="cm-avatar-sm">
                             @post.User.Username.Substring(0, 1).ToUpper()
@@ -39,13 +37,11 @@
                         </div>
                     </div>
 
-                    <!-- Image -->
                     @if (!string.IsNullOrEmpty(post.ImageUrl))
                     {
                         <img src="@post.ImageUrl" class="cm-card-img" alt="post image" />
                     }
 
-                    <!-- Body -->
                     <div class="cm-card-body">
                         @if (!string.IsNullOrEmpty(post.Title))
                         {
@@ -57,7 +53,6 @@
                         }
                     </div>
 
-                    <!-- Footer -->
                     <div class="cm-card-footer">
                         <div style="display:flex;align-items:center;gap:1rem;">
                             <a href="/Post/Detail/@post.Id" class="cm-comment-link">
@@ -72,11 +67,11 @@
 
                         @if ((int?)Session["UserId"] == post.UserId)
                         {
-                            using (Html.BeginForm("Delete", "Post", new { id = post.Id }, FormMethod.Post))
+                            using (Html.BeginForm("Delete", "Post", new { id = post.Id }, FormMethod.Post, new { id = formId }))
                             {
                                 @Html.AntiForgeryToken()
-                                <button type="submit"
-                                        onclick="return confirm('Delete this post?')"
+                                <button type="button"
+                                        onclick="showDeleteModal('@formId')"
                                         class="cm-delete-btn">
                                     <i class="bi bi-trash"></i>
                                 </button>

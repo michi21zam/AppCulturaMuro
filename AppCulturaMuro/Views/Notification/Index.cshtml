@@ -1,0 +1,50 @@
+﻿@model List<AppCulturaMuro.Models.Notification>
+@{
+    ViewBag.Title = "Notifications";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="cm-feed-wrap">
+    <div class="cm-feed-header">
+        <h1 class="cm-feed-title">Notifications</h1>
+        @if (Model.Any(n => !n.IsRead))
+        {
+            using (Html.BeginForm("MarkAllRead", "Notification", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="cm-search-btn"
+                        style="width:auto;padding:6px 14px;border-radius:50px;font-size:12px;">
+                    Mark all as read
+                </button>
+            }
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="cm-empty">
+            <i class="bi bi-bell" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>
+            No notifications yet.
+        </div>
+    }
+    else
+    {
+        foreach (var n in Model)
+        {
+            <div class="cm-notif-item @(!n.IsRead ? "cm-notif-unread" : "")">
+                <div class="cm-notif-icon">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+                <div class="cm-notif-body">
+                    <div class="cm-notif-msg">@n.Message</div>
+                    <div class="cm-notif-time">
+                        <span class="cm-relative-time" data-date="@n.CreatedAt.ToString("o")"></span>
+                    </div>
+                </div>
+                <a href="/Post/Detail/@n.PostId" class="cm-notif-link">
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        }
+    }
+</div>
